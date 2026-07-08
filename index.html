@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Apology & Love Letter</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -84,6 +85,148 @@
             margin-bottom: 10px;
             font-weight: 600;
             letter-spacing: 1px;
+        }
+
+        /* Save Button */
+        .save-section {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .save-btn {
+            background: linear-gradient(135deg, #00b894, #00a383);
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 184, 148, 0.3);
+        }
+
+        .save-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 184, 148, 0.4);
+        }
+
+        .save-btn:active {
+            transform: translateY(0);
+        }
+
+        /* QR Code Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            color: #d63031;
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        #qrcode {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        #qrcode canvas {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .modal-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            flex: 1;
+            min-width: 100px;
+        }
+
+        .modal-btn.primary {
+            background: linear-gradient(135deg, #ff7675, #d63031);
+            color: white;
+        }
+
+        .modal-btn.primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(214, 48, 49, 0.3);
+        }
+
+        .modal-btn.secondary {
+            background: #e8e8e8;
+            color: #2d3436;
+        }
+
+        .modal-btn.secondary:hover {
+            background: #d0d0d0;
+        }
+
+        .close {
+            color: #b2bec3;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: #d63031;
+        }
+
+        .qr-info {
+            color: #b2bec3;
+            font-size: 12px;
+            margin-top: 15px;
+            font-style: italic;
         }
 
         /* Photo Upload and Display */
@@ -425,6 +568,19 @@
             .audio-controls {
                 flex-direction: column;
             }
+
+            .modal-content {
+                width: 95%;
+                padding: 20px;
+            }
+
+            .save-section {
+                flex-direction: column;
+            }
+
+            .save-btn {
+                width: 100%;
+            }
         }
 
         /* Decorative elements */
@@ -477,6 +633,28 @@
         <div class="header">
             <h1>💕 My Apology & Love Letter 💕</h1>
         </div>
+
+        <!-- Save Section -->
+        <div class="save-section">
+            <button class="save-btn" onclick="openQRModal()">💾 Save & Get QR Code</button>
+        </div>
+
+        <!-- QR Code Modal -->
+        <div id="qrModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeQRModal()">&times;</span>
+                <div class="modal-header">✨ Share Your Love Letter ✨</div>
+                <p style="color: #2d3436; margin-bottom: 15px;">Scan this QR code to view the complete letter:</p>
+                <div id="qrcode"></div>
+                <div class="qr-info">📱 Your boyfriend can scan this with his phone camera</div>
+                <div class="modal-buttons">
+                    <button class="modal-btn primary" onclick="downloadQR()">📥 Download QR</button>
+                    <button class="modal-btn secondary" onclick="copyLink()">📋 Copy Link</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="divider"></div>
 
         <!-- Photo Section -->
         <div class="photo-section">
@@ -592,6 +770,56 @@
 
         setInterval(createFloatingHearts, 800);
 
+        // QR Code Functions
+        function openQRModal() {
+            const modal = document.getElementById('qrModal');
+            modal.style.display = 'block';
+            
+            // Clear previous QR code
+            document.getElementById('qrcode').innerHTML = '';
+            
+            // Generate QR code
+            const url = window.location.href;
+            new QRCode(document.getElementById('qrcode'), {
+                text: url,
+                width: 250,
+                height: 250,
+                colorDark: '#d63031',
+                colorLight: '#ffffff',
+                correctLevel: QRCode.CorrectLevel.H
+            });
+        }
+
+        function closeQRModal() {
+            const modal = document.getElementById('qrModal');
+            modal.style.display = 'none';
+        }
+
+        function downloadQR() {
+            const canvas = document.querySelector('#qrcode canvas');
+            if (canvas) {
+                const link = document.createElement('a');
+                link.href = canvas.toDataURL('image/png');
+                link.download = 'love-letter-qr.png';
+                link.click();
+            }
+        }
+
+        function copyLink() {
+            const url = window.location.href;
+            navigator.clipboard.writeText(url).then(() => {
+                alert('✅ Link copied to clipboard!');
+            });
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('qrModal');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+
         // Tab Switching
         function switchTab(tab) {
             // Hide all tabs
@@ -685,29 +913,17 @@
             const videoId = extractYoutubeVideoId(url);
             
             if (videoId) {
-                // Use noCookie domain for privacy
-                const embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&controls=0&modestbranding=1&fs=0&rel=0`;
-                const audioUrl = `https://www.youtube.com/watch?v=${videoId}`;
-                
-                // For audio playback, we'll use a workaround
                 const audioPlayer = document.getElementById('audioPlayer');
                 
-                // Try to use invidious instance (privacy-focused YouTube alternative)
-                const invidiousUrl = `https://inv.nadeko.net/api/v1/info?id=${videoId}&fields=title`;
-                
-                // Since YouTube doesn't allow direct audio extraction, we'll use a message
                 document.getElementById('musicName').textContent = '🎵 YouTube Video Loaded';
                 document.getElementById('playBtn').classList.add('enabled');
                 document.getElementById('pauseBtn').classList.add('enabled');
                 
-                // Set a placeholder in audio player
                 audioPlayer.src = '';
                 
-                // Show info message
                 const musicInfo = document.querySelector('.music-info');
                 musicInfo.textContent = '✅ YouTube video ready! Click Play to open in a new window. (Audio will play there)';
                 
-                // Store video ID for opening
                 audioPlayer.dataset.videoId = videoId;
             } else {
                 alert('Please paste a valid YouTube URL');
@@ -722,7 +938,6 @@
                 audioPlayer.src = url;
                 audioPlayer.dataset.videoId = null;
                 
-                // Extract filename from URL or show generic name
                 const fileName = url.split('/').pop().split('?')[0] || 'Song';
                 document.getElementById('musicName').textContent = '🎵 ' + fileName;
                 document.getElementById('playBtn').classList.add('enabled');
@@ -737,7 +952,6 @@
         function playMusic() {
             const audioPlayer = document.getElementById('audioPlayer');
             
-            // If it's a YouTube video
             if (audioPlayer.dataset.videoId) {
                 const videoId = audioPlayer.dataset.videoId;
                 window.open(`https://www.youtube.com/watch?v=${videoId}`, '_blank');
