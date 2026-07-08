@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Apology & Love Letter</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 25%, #f5b041 50%, #e8a76f 75%, #d4a17a 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            max-width: 600px;
+            width: 100%;
+            padding: 40px 30px;
+            animation: fadeIn 1.5s ease-in-out;
+            position: relative;
+            z-index: 10;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Floating Hearts Animation */
+        .heart {
+            position: fixed;
+            width: 30px;
+            height: 30px;
+            color: #ff6b9d;
+            font-size: 30px;
+            animation: float 6s infinite ease-in;
+            opacity: 0.6;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0) translateX(0) rotate(0deg);
+                opacity: 0.6;
+            }
+            50% {
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(-100vh) translateX(100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #d63031;
+            font-size: 28px;
+            margin-bottom: 10px;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        /* Photo Upload and Display */
+        .photo-section {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .photo-container {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(214, 48, 49, 0.3);
+            background: linear-gradient(135deg, #ffeaa7, #fdcb6e);
+            min-height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #uploadedPhoto {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .photo-placeholder {
+            color: #b2bec3;
+            font-size: 14px;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .file-input-wrapper {
+            margin-top: 15px;
+            position: relative;
+            display: inline-block;
+        }
+
+        #photoInput {
+            display: none;
+        }
+
+        .upload-btn {
+            background: linear-gradient(135deg, #ff7675, #d63031);
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(214, 48, 49, 0.3);
+        }
+
+        .upload-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(214, 48, 49, 0.4);
+        }
+
+        .upload-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Message Box */
+        .message-section {
+            margin: 30px 0;
+        }
+
+        .message-section label {
+            display: block;
+            color: #d63031;
+            font-weight: 600;
+            margin-bottom: 12px;
+            font-size: 14px;
+        }
+
+        #messageInput {
+            width: 100%;
+            min-height: 150px;
+            padding: 15px;
+            border: 2px solid #f5b041;
+            border-radius: 12px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 14px;
+            color: #2d3436;
+            resize: vertical;
+            background: rgba(255, 234, 167, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        #messageInput:focus {
+            outline: none;
+            border-color: #d63031;
+            background: rgba(255, 234, 167, 0.3);
+            box-shadow: 0 0 10px rgba(214, 48, 49, 0.2);
+        }
+
+        .message-display {
+            width: 100%;
+            min-height: 150px;
+            padding: 15px;
+            border: 2px solid #f5b041;
+            border-radius: 12px;
+            background: rgba(255, 234, 167, 0.1);
+            color: #2d3436;
+            font-size: 15px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            display: none;
+        }
+
+        /* Countdown */
+        .countdown-section {
+            background: linear-gradient(135deg, rgba(255, 119, 117, 0.1), rgba(245, 176, 65, 0.1));
+            border-radius: 12px;
+            padding: 20px;
+            margin: 25px 0;
+            text-align: center;
+            border: 2px solid rgba(214, 48, 49, 0.2);
+        }
+
+        .countdown-label {
+            color: #d63031;
+            font-weight: 600;
+            margin-bottom: 12px;
+            font-size: 14px;
+        }
+
+        .countdown-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #f5b041;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-bottom: 15px;
+            background: rgba(255, 255, 255, 0.8);
+            color: #2d3436;
+        }
+
+        .countdown-input:focus {
+            outline: none;
+            border-color: #d63031;
+        }
+
+        .countdown-display {
+            display: none;
+            font-size: 16px;
+            color: #2d3436;
+        }
+
+        .countdown-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #d63031;
+            line-height: 1.2;
+        }
+
+        /* Music Player */
+        .music-section {
+            margin: 25px 0;
+            background: linear-gradient(135deg, rgba(255, 119, 117, 0.05), rgba(245, 176, 65, 0.05));
+            padding: 20px;
+            border-radius: 12px;
+            border: 2px solid rgba(214, 48, 49, 0.1);
+        }
+
+        .music-label {
+            color: #d63031;
+            font-weight: 600;
+            margin-bottom: 12px;
+            font-size: 14px;
+            display: block;
+        }
+
+        .music-controls {
+            display: flex;
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        #musicInput {
+            display: none;
+        }
+
+        .file-input-label {
+            background: linear-gradient(135deg, #ff7675, #d63031);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        .file-input-label:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(214, 48, 49, 0.3);
+        }
+
+        .audio-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        button.control-btn {
+            background: linear-gradient(135deg, #ff7675, #d63031);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            transition: all 0.3s ease;
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        button.control-btn.enabled {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        button.control-btn.enabled:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(214, 48, 49, 0.3);
+        }
+
+        .music-name {
+            color: #2d3436;
+            font-size: 13px;
+            font-weight: 500;
+            margin-top: 8px;
+            max-width: 300px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Final Messages */
+        .final-messages {
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .love-message {
+            font-size: 20px;
+            color: #d63031;
+            font-weight: 600;
+            margin-bottom: 20px;
+            letter-spacing: 1px;
+        }
+
+        .thank-you-message {
+            font-size: 18px;
+            color: #2d3436;
+            font-weight: 500;
+            line-height: 1.6;
+            font-style: italic;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 600px) {
+            .container {
+                padding: 25px 20px;
+                margin: 20px;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .photo-container {
+                min-height: 250px;
+            }
+
+            .countdown-value {
+                font-size: 24px;
+            }
+
+            .love-message {
+                font-size: 18px;
+            }
+
+            .thank-you-message {
+                font-size: 16px;
+            }
+
+            .music-controls {
+                flex-direction: column;
+            }
+
+            .file-input-label,
+            button.control-btn {
+                width: 100%;
+            }
+        }
+
+        /* Decorative elements */
+        .divider {
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #f5b041, transparent);
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>💕 My Apology & Love Letter 💕</h1>
+        </div>
+
+        <!-- Photo Section -->
+        <div class="photo-section">
+            <div class="photo-container">
+                <img id="uploadedPhoto" style="display: none;">
+                <div class="photo-placeholder" id="photoPlaceholder">
+                    📸 Click "Upload Photo" to add your favorite photo together
+                </div>
+            </div>
+            <div class="file-input-wrapper" style="margin-top: 15px;">
+                <input type="file" id="photoInput" accept="image/*">
+                <button class="upload-btn" onclick="document.getElementById('photoInput').click()">
+                    📷 Upload Our Photo
+                </button>
+            </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Countdown Section -->
+        <div class="countdown-section">
+            <label class="countdown-label">When did we start dating?</label>
+            <input type="date" id="dateInput" class="countdown-input" placeholder="Select the date we met">
+            <div class="countdown-display" id="countdownDisplay">
+                <div style="margin-bottom: 8px;">Time Together ❤️</div>
+                <div class="countdown-value" id="countdownValue">0 days</div>
+            </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Message Section -->
+        <div class="message-section">
+            <label for="messageInput">✍️ My Message to You:</label>
+            <textarea id="messageInput" placeholder="Write your heartfelt message here... Tell him what he means to you and why you're sorry..."></textarea>
+            <div class="message-display" id="messageDisplay"></div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Music Section -->
+        <div class="music-section">
+            <label class="music-label">🎵 Our Song (plays while you read):</label>
+            <div class="music-controls">
+                <label class="file-input-label" for="musicInput">
+                    🎶 Upload Song
+                </label>
+                <input type="file" id="musicInput" accept="audio/*">
+                <div class="audio-controls">
+                    <button class="control-btn" id="playBtn" onclick="playMusic()">▶️ Play</button>
+                    <button class="control-btn" id="pauseBtn" onclick="pauseMusic()">⏸️ Pause</button>
+                </div>
+            </div>
+            <div class="music-name" id="musicName"></div>
+            <audio id="audioPlayer" style="display: none;"></audio>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Final Messages -->
+        <div class="final-messages">
+            <div class="love-message">With all my love ❤️</div>
+            <div class="thank-you-message">
+                Thank you for staying with me.<br>I love you.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Floating Hearts Animation
+        function createFloatingHearts() {
+            const heart = document.createElement('div');
+            heart.classList.add('heart');
+            heart.innerHTML = '❤️';
+            heart.style.left = Math.random() * window.innerWidth + 'px';
+            heart.style.animationDuration = (5 + Math.random() * 3) + 's';
+            document.body.appendChild(heart);
+
+            setTimeout(() => {
+                heart.remove();
+            }, 8000);
+        }
+
+        setInterval(createFloatingHearts, 800);
+
+        // Photo Upload
+        document.getElementById('photoInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const img = document.getElementById('uploadedPhoto');
+                    img.src = event.target.result;
+                    img.style.display = 'block';
+                    document.getElementById('photoPlaceholder').style.display = 'none';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Countdown Timer
+        document.getElementById('dateInput').addEventListener('change', function() {
+            updateCountdown();
+        });
+
+        function updateCountdown() {
+            const dateInput = document.getElementById('dateInput').value;
+            if (dateInput) {
+                const startDate = new Date(dateInput);
+                const today = new Date();
+                const timeDiff = today - startDate;
+                const daysDiff = Math.floor(timeDiff / (1000 * 3600 * 24));
+                const months = Math.floor(daysDiff / 30);
+                const years = Math.floor(daysDiff / 365);
+
+                let displayText = '';
+                if (years > 0) {
+                    displayText = years + ' year' + (years > 1 ? 's' : '') + ', ' + 
+                                  (months % 12) + ' month' + ((months % 12) !== 1 ? 's' : '') + ', and ' +
+                                  (daysDiff % 30) + ' day' + ((daysDiff % 30) !== 1 ? 's' : '');
+                } else if (months > 0) {
+                    displayText = months + ' month' + (months > 1 ? 's' : '') + ' and ' +
+                                  (daysDiff % 30) + ' day' + ((daysDiff % 30) !== 1 ? 's' : '');
+                } else {
+                    displayText = daysDiff + ' day' + (daysDiff !== 1 ? 's' : '');
+                }
+
+                document.getElementById('countdownValue').textContent = displayText;
+                document.getElementById('countdownDisplay').style.display = 'block';
+            }
+        }
+
+        // Music Player
+        document.getElementById('musicInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const audioPlayer = document.getElementById('audioPlayer');
+                const fileURL = URL.createObjectURL(file);
+                audioPlayer.src = fileURL;
+                
+                document.getElementById('musicName').textContent = file.name;
+                document.getElementById('playBtn').classList.add('enabled');
+                document.getElementById('pauseBtn').classList.add('enabled');
+
+                audioPlayer.play();
+            }
+        });
+
+        function playMusic() {
+            const audioPlayer = document.getElementById('audioPlayer');
+            if (audioPlayer.src) {
+                audioPlayer.play();
+            }
+        }
+
+        function pauseMusic() {
+            const audioPlayer = document.getElementById('audioPlayer');
+            audioPlayer.pause();
+        }
+
+        // Message Display (optional - for viewing mode)
+        document.getElementById('messageInput').addEventListener('input', function() {
+            document.getElementById('messageDisplay').textContent = this.value;
+        });
+
+        // Page Load Animation
+        window.addEventListener('load', function() {
+            console.log('💕 Romantic page loaded! 💕');
+        });
+    </script>
+</body>
+</html>
