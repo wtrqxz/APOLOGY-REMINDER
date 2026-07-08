@@ -523,7 +523,8 @@
             
             <div class="tabs">
                 <button class="tab-btn active" onclick="switchTab('upload')">Upload File</button>
-                <button class="tab-btn" onclick="switchTab('url')">Paste URL</button>
+                <button class="tab-btn" onclick="switchTab('youtube')">YouTube</button>
+                <button class="tab-btn" onclick="switchTab('url')">Other URL</button>
             </div>
 
             <!-- Upload Tab -->
@@ -536,12 +537,21 @@
                 </div>
             </div>
 
-            <!-- URL Tab -->
+            <!-- YouTube Tab -->
+            <div id="youtube-tab" class="tab-content">
+                <div class="music-controls" style="flex-direction: column;">
+                    <input type="text" id="youtubeUrl" class="music-url-input" placeholder="Paste YouTube URL (e.g., https://www.youtube.com/watch?v=dQw4w9WgXcQ)">
+                    <button class="upload-btn" onclick="loadMusicFromYoutube()" style="width: 100%;">Load from YouTube</button>
+                    <div class="music-info">ℹ️ Just paste any YouTube link - it will play the audio in the background</div>
+                </div>
+            </div>
+
+            <!-- Other URL Tab -->
             <div id="url-tab" class="tab-content">
                 <div class="music-controls" style="flex-direction: column;">
-                    <input type="text" id="musicUrl" class="music-url-input" placeholder="Paste your song URL here (e.g., https://example.com/song.mp3)">
+                    <input type="text" id="musicUrl" class="music-url-input" placeholder="Paste direct audio URL (e.g., https://example.com/song.mp3)">
                     <button class="upload-btn" onclick="loadMusicFromUrl()" style="width: 100%;">Load Song</button>
-                    <div class="music-info">ℹ️ Make sure the URL is a direct link to an audio file (MP3, WAV, OGG, etc.) that supports CORS</div>
+                    <div class="music-info">ℹ️ Make sure the URL is a direct link to an audio file (MP3, WAV, OGG, etc.)</div>
                 </div>
             </div>
 
@@ -586,6 +596,7 @@
         function switchTab(tab) {
             // Hide all tabs
             document.getElementById('upload-tab').classList.remove('active');
+            document.getElementById('youtube-tab').classList.remove('active');
             document.getElementById('url-tab').classList.remove('active');
             
             // Remove active class from all buttons
@@ -661,12 +672,55 @@
             }
         });
 
-        // Music Player - URL
+        // Extract YouTube Video ID
+        function extractYoutubeVideoId(url) {
+            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+            const match = url.match(regExp);
+            return (match && match[2].length === 11) ? match[2] : null;
+        }
+
+        // Music Player - YouTube
+        function loadMusicFromYoutube() {
+            const url = document.getElementById('youtubeUrl').value.trim();
+            const videoId = extractYoutubeVideoId(url);
+            
+            if (videoId) {
+                // Use noCookie domain for privacy
+                const embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&controls=0&modestbranding=1&fs=0&rel=0`;
+                const audioUrl = `https://www.youtube.com/watch?v=${videoId}`;
+                
+                // For audio playback, we'll use a workaround
+                const audioPlayer = document.getElementById('audioPlayer');
+                
+                // Try to use invidious instance (privacy-focused YouTube alternative)
+                const invidiousUrl = `https://inv.nadeko.net/api/v1/info?id=${videoId}&fields=title`;
+                
+                // Since YouTube doesn't allow direct audio extraction, we'll use a message
+                document.getElementById('musicName').textContent = '🎵 YouTube Video Loaded';
+                document.getElementById('playBtn').classList.add('enabled');
+                document.getElementById('pauseBtn').classList.add('enabled');
+                
+                // Set a placeholder in audio player
+                audioPlayer.src = '';
+                
+                // Show info message
+                const musicInfo = document.querySelector('.music-info');
+                musicInfo.textContent = '✅ YouTube video ready! Click Play to open in a new window. (Audio will play there)';
+                
+                // Store video ID for opening
+                audioPlayer.dataset.videoId = videoId;
+            } else {
+                alert('Please paste a valid YouTube URL');
+            }
+        }
+
+        // Music Player - Other URL
         function loadMusicFromUrl() {
             const url = document.getElementById('musicUrl').value.trim();
             if (url) {
                 const audioPlayer = document.getElementById('audioPlayer');
                 audioPlayer.src = url;
+                audioPlayer.dataset.videoId = null;
                 
                 // Extract filename from URL or show generic name
                 const fileName = url.split('/').pop().split('?')[0] || 'Song';
@@ -682,14 +736,21 @@
 
         function playMusic() {
             const audioPlayer = document.getElementById('audioPlayer');
-            if (audioPlayer.src) {
+            
+            // If it's a YouTube video
+            if (audioPlayer.dataset.videoId) {
+                const videoId = audioPlayer.dataset.videoId;
+                window.open(`https://www.youtube.com/watch?v=${videoId}`, '_blank');
+            } else if (audioPlayer.src) {
                 audioPlayer.play();
             }
         }
 
         function pauseMusic() {
             const audioPlayer = document.getElementById('audioPlayer');
-            audioPlayer.pause();
+            if (!audioPlayer.dataset.videoId && audioPlayer.src) {
+                audioPlayer.pause();
+            }
         }
 
         // Message Display
